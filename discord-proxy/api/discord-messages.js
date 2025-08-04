@@ -1,15 +1,26 @@
 // Enhanced business-grade Discord proxy
 module.exports = async function handler(req, res) {
+  // CORS headers - set these first for all requests
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Accept, User-Agent');
+  
+  // Handle preflight OPTIONS request
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
+  }
+  
   // Security headers for business use
   res.setHeader('X-Content-Type-Options', 'nosniff');
   res.setHeader('X-Frame-Options', 'DENY');
   res.setHeader('X-XSS-Protection', '1; mode=block');
   
-  // Only allow GET requests
+  // Only allow GET requests (after handling OPTIONS)
   if (req.method !== 'GET') {
     return res.status(405).json({ 
       error: 'Method not allowed',
-      allowed: ['GET']
+      allowed: ['GET', 'OPTIONS']
     });
   }
 
@@ -46,10 +57,7 @@ module.exports = async function handler(req, res) {
 
     const data = await response.json();
 
-    // Enhanced CORS headers for business use
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    // Set response headers
     res.setHeader('Content-Type', 'application/json');
     res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
 
