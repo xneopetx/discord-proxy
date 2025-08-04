@@ -4,8 +4,16 @@
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 import { bannedWordsPatterns } from './banlist.js';
 
-const SUPABASE_URL = 'https://ztqjfchivferpkqubjpy.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp0cWpmY2hpdmZlcnBrcXVianB5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE1NDkzMzAsImV4cCI6MjA2NzEyNTMzMH0.dNV4hixc20P1LTnf7DxqD-oUJN48fZLqpNcJwsGwyr4';
+// TODO: SECURITY - Move these to environment variables for production!
+// These should be set via your hosting platform's environment variables
+const SUPABASE_URL = window.SUPABASE_URL || 'https://ztqjfchivferpkqubjpy.supabase.co';
+const SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp0cWpmY2hpdmZlcnBrcXVianB5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE1NDkzMzAsImV4cCI6MjA2NzEyNTMzMH0.dNV4hixc20P1LTnf7DxqD-oUJN48fZLqpNcJwsGwyr4';
+
+// Validate configuration
+if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+    console.error('Missing Supabase configuration. Chat functionality will be disabled.');
+}
+
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // Generate a pastel color based on a hash of the name to keep it consistent per user

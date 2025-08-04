@@ -145,7 +145,6 @@ export class iPodMusicPlayer {
             spotifyUrl: audio.dataset.spotifyurl || ''
         }));
         
-        console.log('Loaded playlist from HTML:', this.playlist);
         this.playlistData = [...this.playlist]; // Keep both playlists in sync
         this.selectedIndex = 0;
         this.currentTrackIndex = 0;
@@ -271,20 +270,17 @@ export class iPodMusicPlayer {
         
         // Handle album art with improved loading and error handling
         if (track.albumArt && albumArtImg && albumArtPlaceholder) {
-            console.log('Loading album art:', track.albumArt);
             
             // Reset classes and state
             albumArtImg.classList.remove('loaded');
             
             // Set up load and error handlers
             const onLoad = () => {
-                console.log('Album art loaded successfully');
                 albumArtImg.classList.add('loaded');
                 albumArtPlaceholder.style.display = 'none';
             };
             
             const onError = () => {
-                console.error('Failed to load album art:', track.albumArt);
                 albumArtImg.classList.remove('loaded');
                 albumArtPlaceholder.style.display = 'flex';
             };
@@ -301,7 +297,6 @@ export class iPodMusicPlayer {
                 onLoad();
             }
         } else if (!track.albumArt && albumArtPlaceholder) {
-            console.log('No album art specified for track');
             albumArtPlaceholder.style.display = 'flex';
             if (albumArtImg) {
                 albumArtImg.classList.remove('loaded');
@@ -403,7 +398,6 @@ export class iPodMusicPlayer {
     }
 
     updatePlayPauseButton(showPlay) {
-        console.log('DEBUG: updatePlayPauseButton called with showPlay:', showPlay, 'current isPlaying:', this.isPlaying);
         // Make sure we have the latest references to the buttons
         this.playPauseBtn = document.getElementById('play-pause');
         if (!this.playPauseBtn) {

@@ -1,7 +1,5 @@
 // gallery.js - Complete Fixed Version
 document.addEventListener('DOMContentLoaded', function() {
-  console.log('Gallery script initialized'); // Debug 1
-
   // Sample data with multiple path options - try them one by one
   const clothingItems = [
     {
@@ -38,7 +36,6 @@ document.addEventListener('DOMContentLoaded', function() {
     console.error('Error: Could not find .gallery-grid element');
     return;
   }
-  console.log('Gallery grid found:', galleryGrid); // Debug 2
 
   // 2. Image loader with debugging
   function loadImage(url) {
@@ -46,7 +43,6 @@ document.addEventListener('DOMContentLoaded', function() {
       const img = new Image();
       img.src = url;
       img.onload = () => {
-        console.log(`Image loaded: ${url}`); // Debug 3
         resolve(url);
       };
       img.onerror = () => {

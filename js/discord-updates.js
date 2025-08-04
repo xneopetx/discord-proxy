@@ -1,7 +1,10 @@
 // Configuration
 const UPDATE_INTERVAL = 30000; // 30 seconds
 const MESSAGES_PER_PAGE = 20; // Number of messages to load at once
-const DISCORD_API_URL = 'https://8aa5dba9-a0d7-49a0-be13-bb0913d48f60-00-3rwl9v1mf0e9l.janeway.replit.dev/api/messages';
+// TODO: Move this to environment variable or config for production
+const DISCORD_API_URL = window.location.hostname === 'localhost' 
+    ? 'https://8aa5dba9-a0d7-49a0-be13-bb0913d48f60-00-3rwl9v1mf0e9l.janeway.replit.dev/api/messages'
+    : '/api/discord-messages'; // Use relative path for production
 
 // No global discordContent variable—always get fresh DOM reference
 
@@ -23,7 +26,7 @@ const seenMessageIds = new Set();
 
 // Update the content window with messages from Discord
 function updateContent(newMessages, isLoadMore = false) {
-    console.log('Updating content with', newMessages.length, 'messages, isLoadMore:', isLoadMore);
+    
     
     const loadingEl = document.getElementById('updates-loading');
     const contentEl = document.getElementById('updates-content');
@@ -51,11 +54,11 @@ function updateContent(newMessages, isLoadMore = false) {
         contentEl.classList.add('fade-in');
         setTimeout(() => contentEl.classList.remove('fade-in'), 250);
     }, 250);
-    console.log('Updated loading/content visibility');
+    
     
     // Check if we have messages to process
     if (!newMessages || newMessages.length === 0) {
-        console.log('No new messages to display');
+        
         if (isInitialLoad && discordContent && !discordContent.hasChildNodes()) {
             discordContent.innerHTML = `
                 <div class="empty-state" role="status" aria-live="polite" style="text-align: center; color: #6c757d; padding: 32px 20px; animation: fadeIn 0.25s;">
@@ -63,18 +66,18 @@ function updateContent(newMessages, isLoadMore = false) {
                     <div style="font-size: 18px;">No updates found.<br>Check back later!</div>
                 </div>
             `;
-            console.log('Displayed "no updates" message');
+            
         }
         hasMoreMessages = false;
         isInitialLoad = false;
         return;
     }
     
-    console.log('Processing', newMessages.length, 'new messages');
+    
     
     // Check for deleted messages on initial load
     if (!isLoadMore) {
-        console.log('Checking for deleted messages...');
+        
         const currentMessageIds = new Set(newMessages.map(msg => msg.id));
         const messageElements = document.querySelectorAll('.discord-message');
         let removedCount = 0;
@@ -89,7 +92,7 @@ function updateContent(newMessages, isLoadMore = false) {
         });
         
         if (removedCount > 0) {
-            console.log(`Removed ${removedCount} deleted messages`);
+            
         }
     }
 
@@ -97,10 +100,10 @@ function updateContent(newMessages, isLoadMore = false) {
     const existingIds = new Set(messages.map(msg => msg.id));
     const uniqueNewMessages = newMessages.filter(msg => !existingIds.has(msg.id));
     
-    console.log('Found', uniqueNewMessages.length, 'unique new messages');
+    
     
     if (uniqueNewMessages.length === 0) {
-        console.log('No new unique messages to add');
+        
         hasMoreMessages = false;
         isInitialLoad = false;
         return;
@@ -108,31 +111,31 @@ function updateContent(newMessages, isLoadMore = false) {
 
     // Sort messages by timestamp (newest first)
     uniqueNewMessages.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-    console.log('Sorted messages by timestamp');
+    
 
     if (isLoadMore) {
-        console.log('Appending older messages');
+        
         // Append older messages to the existing ones
         messages = [...messages, ...uniqueNewMessages];
         
         // Re-render all messages to maintain proper order
         renderAllMessages();
     } else {
-        console.log('Adding new messages to the beginning');
+        
         // For initial load or new messages, add to the beginning
         messages = [...uniqueNewMessages, ...messages];
         
         if (isInitialLoad) {
-            console.log('Initial load, rendering all messages');
+            
             renderAllMessages();
         } else {
-            console.log('Rendering only new messages');
+            
             const newHtml = uniqueNewMessages.map(msg => createMessageHtml(msg)).join('');
             const discordContent = document.getElementById('discord-content');
             if (discordContent) {
                 discordContent.insertAdjacentHTML('afterbegin', newHtml);
-                console.log('Inserted new messages at the beginning');
-                console.log('discord-content after insert:', discordContent.innerHTML);
+                
+                
             } else {
                 console.error('discordContent element not found');
             }
@@ -144,12 +147,12 @@ function updateContent(newMessages, isLoadMore = false) {
     isLoading = false;
     lastFetchTime = Date.now();
     
-    console.log('Content update complete. Total messages:', messages.length, 'Has more messages:', hasMoreMessages);
+    
 }
 
 // Render all messages in the messages array
 function renderAllMessages() {
-    console.log('Rendering all messages. Total messages:', messages.length);
+    
     // Always ensure loading spinner is hidden and content is visible after rendering
     const loadingEl = document.getElementById('updates-loading');
     const contentEl = document.getElementById('updates-content');
@@ -163,7 +166,7 @@ function renderAllMessages() {
     }
     
     if (!messages || messages.length === 0) {
-        console.log('No messages to render');
+        
         discordContent.innerHTML = '<p style="text-align: center; color: #6c757d; padding: 20px;">No messages found.</p>';
         return;
     }
@@ -176,7 +179,7 @@ function renderAllMessages() {
             return timeB - timeA;
         });
         
-        console.log(`Rendering ${sortedMessages.length} sorted messages`);
+        
         
         // Create HTML for all messages
         const html = sortedMessages.map(msg => {
@@ -194,10 +197,10 @@ function renderAllMessages() {
             return;
         }
         
-        console.log('Updating DOM with rendered messages');
+        
         discordContent.innerHTML = html;
-        console.log('Messages rendered successfully');
-        console.log('discord-content after render:', discordContent.innerHTML);
+        
+        
         // Always ensure loading spinner is hidden and content is visible after rendering
         const loadingEl = document.getElementById('updates-loading');
         const contentEl = document.getElementById('updates-content');
@@ -258,7 +261,7 @@ async function loadMoreMessages() {
 // Helper function to create HTML for a single message
 function createMessageHtml(msg) {
     try {
-        console.log('Creating HTML for message:', msg.id);
+        
         
         // Validate message object
         if (!msg || typeof msg !== 'object') {
@@ -410,7 +413,7 @@ window.fetchMessages = async function(isLoadingMore = false) {
     
     // Function to hide loading state
     const hideLoading = () => {
-        console.log('Hiding loading state');
+        
         if (loadingEl) {
             loadingEl.style.display = 'none';
         }
@@ -446,7 +449,7 @@ window.fetchMessages = async function(isLoadingMore = false) {
     
     // Show loading state immediately in the next animation frame
     requestAnimationFrame(() => {
-        console.log('Showing loading state');
+        
         if (contentEl) {
             contentEl.style.display = 'none';
         }
@@ -472,7 +475,7 @@ window.fetchMessages = async function(isLoadingMore = false) {
                 // Hide spinner and show content even if it times out
                 if (loadingEl) loadingEl.style.display = 'none';
                 if (contentEl) contentEl.style.display = 'block';
-                console.log('No response after 10 seconds, checking connection...');
+                
                 showError('Connection timed out. The server might be down or you might be offline.');
             }
         }, 10000);
@@ -481,17 +484,17 @@ window.fetchMessages = async function(isLoadingMore = false) {
     // Set loading state after the UI update is scheduled
     isLoading = true;
     
-    console.log('Fetching messages...');
+    
     
     // Initialize AbortController for the fetch request
     const controller = new AbortController();
     const timeoutId = setTimeout(() => {
-        console.log('Request timeout reached');
+        
         controller.abort();
     }, 15000); // 15 second timeout
     
     try {
-        console.log(isLoadingMore ? 'Loading more messages...' : 'Fetching messages...');
+        
         
         // Build the URL with query parameters
         const params = new URLSearchParams();
@@ -511,7 +514,7 @@ window.fetchMessages = async function(isLoadingMore = false) {
         }
         
         const url = `${DISCORD_API_URL}?${params.toString()}`;
-        console.log('API Request:', url);
+        
         
         const response = await fetch(url, {
             method: 'GET',
@@ -540,9 +543,9 @@ window.fetchMessages = async function(isLoadingMore = false) {
         
         // Process the messages
         if (data && Array.isArray(data)) {
-            console.log('Received', data.length, 'messages');
+            
             if (data.length === 0) {
-                console.log('No new messages available');
+                
                 if (isLoadingMore) {
                     hasMoreMessages = false;
                 } else {
@@ -620,39 +623,39 @@ window.fetchMessages = async function(isLoadingMore = false) {
 
 // Set up auto-refresh
 function startAutoRefresh() {
-    console.log('Starting auto-refresh...');
+    
     
     // Only set up auto-refresh if we're not in an error state
     const checkAndFetch = () => {
-        console.log('Checking for updates...');
+        
         const errorContainer = document.querySelector('.error-container');
         if (!errorContainer) {  // Only fetch if there's no error shown
-            console.log('No error found, fetching messages...');
+            
             fetchMessages().catch(error => {
                 console.error('Error in auto-refresh:', error);
             });
         } else {
-            console.log('Skipping fetch - error container exists');
+            
         }
     };
     
     // Initial load with a small delay to let the page settle
-    console.log('Scheduling initial fetch...');
+    
     setTimeout(() => {
-        console.log('Running initial fetch...');
+        
         checkAndFetch();
     }, 100);
     
     // Set up interval for auto-refresh
     console.log(`Setting up auto-refresh interval (${UPDATE_INTERVAL}ms)...`);
     const refreshInterval = setInterval(() => {
-        console.log('Auto-refresh triggered...');
+        
         checkAndFetch();
     }, UPDATE_INTERVAL);
     
     // Return cleanup function
     return () => {
-        console.log('Clearing auto-refresh interval');
+        
         clearInterval(refreshInterval);
     };
 }
@@ -693,7 +696,7 @@ function initialize() {
     // Start auto-refresh (will trigger initial load)
     window.discordUpdatesCleanup = startAutoRefresh();
 
-    console.log('Discord updates initialized');
+    
 }
 
 // Wait for required DOM elements before initializing
