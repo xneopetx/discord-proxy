@@ -1,4 +1,4 @@
-// Enhanced business-grade Discord proxy
+// Enhanced business-grade Discord proxy v1.1
 module.exports = async function handler(req, res) {
   // Set CORS headers immediately - this is critical for cross-origin requests
   res.setHeader('Access-Control-Allow-Origin', '*');
