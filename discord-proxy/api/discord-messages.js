@@ -1,15 +1,19 @@
 // Enhanced business-grade Discord proxy
 module.exports = async function handler(req, res) {
-  // CORS headers - set these first for all requests
+  // Set CORS headers immediately - this is critical for cross-origin requests
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Accept, User-Agent');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, User-Agent');
+  res.setHeader('Access-Control-Max-Age', '86400'); // 24 hours
   
-  // Handle preflight OPTIONS request
+  // Handle preflight OPTIONS request immediately
   if (req.method === 'OPTIONS') {
+    console.log('Handling OPTIONS preflight request');
     res.status(200).end();
     return;
   }
+  
+  console.log(`Received ${req.method} request from origin:`, req.headers.origin || 'unknown');
   
   // Security headers for business use
   res.setHeader('X-Content-Type-Options', 'nosniff');
