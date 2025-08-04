@@ -42,8 +42,14 @@ module.exports = async function handler(req, res) {
 
     console.log('Forwarding request to:', discordApiUrl.substring(0, 50) + '...');
 
+    // Forward query parameters from the original request
+    const queryString = new URL(`https://example.com${req.url}`).search;
+    const targetUrl = discordApiUrl + queryString;
+    
+    console.log('Full target URL:', targetUrl);
+
     // Forward the request with proper error handling
-    const response = await fetch(discordApiUrl, {
+    const response = await fetch(targetUrl, {
       method: 'GET',
       headers: {
         'User-Agent': 'Business-Discord-Proxy/1.0',
