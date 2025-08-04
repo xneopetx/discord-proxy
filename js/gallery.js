@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', function() {
     {
       id: 2,
       title: "Patchwork Jeans",
-      image: "./images/Gallery/4-5.png", // Use same path as first item
+      image: "./assets/images/Gallery/4-5.png", // Fixed path to match new structure
       date: "04/22/2023",
       likes: 28,
       description: "Upcycled jeans with patchwork design.",
