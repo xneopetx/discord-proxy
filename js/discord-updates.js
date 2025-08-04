@@ -1,10 +1,8 @@
 // Configuration
 const UPDATE_INTERVAL = 30000; // 30 seconds
 const MESSAGES_PER_PAGE = 20; // Number of messages to load at once
-// TODO: Move this to environment variable or config for production
-const DISCORD_API_URL = window.location.hostname === 'localhost' 
-    ? 'https://8aa5dba9-a0d7-49a0-be13-bb0913d48f60-00-3rwl9v1mf0e9l.janeway.replit.dev/api/messages'
-    : '/api/discord-messages'; // Use relative path for production
+// Discord API URL - set this to your backend URL
+const DISCORD_API_URL = window.DISCORD_API_URL || null; // Will use config.js setting
 
 // No global discordContent variable—always get fresh DOM reference
 
