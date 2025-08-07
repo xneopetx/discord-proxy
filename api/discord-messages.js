@@ -1,7 +1,21 @@
 // Enhanced business-grade Discord proxy v1.1
 module.exports = async function handler(req, res) {
   // Set CORS headers immediately - this is critical for cross-origin requests
-  res.setHeader('Access-Control-Allow-Origin', '*');
+// Enhanced CORS for xclutterx domains
+const origin = req.headers.origin;
+const allowedOrigins = [
+  'https://xclutterx.com',
+  'https://www.xclutterx.com', 
+  'https://xclutterx.neocities.org',
+  'https://cluttertest.neocities.org',
+  'http://localhost:3000'
+];
+
+if (allowedOrigins.includes(origin)) {
+  res.setHeader('Access-Control-Allow-Origin', origin);
+} else {
+  res.setHeader('Access-Control-Allow-Origin', 'https://xclutterx.com');
+}
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, User-Agent');
   res.setHeader('Access-Control-Max-Age', '86400'); // 24 hours
@@ -88,3 +102,4 @@ module.exports = async function handler(req, res) {
     });
   }
 }
+
